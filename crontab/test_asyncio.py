@@ -17,7 +17,8 @@ from models import WeaponChangeTopic
 import orm
 import json
 import base64
-import urllib.parse
+import urllib.request
+
 
 # 数据库配置
 dbHost='115.28.134.55'
@@ -35,7 +36,6 @@ def wget(url):
         response = yield from aiohttp.get(url)
     except aiohttp.errors.ClientOSError as e:
         print('[error url:%s]  %s' % (url, e))
-        exit()
     else:
         return (yield from response.text())
 
@@ -60,18 +60,14 @@ def getImgWords(imgUrl):
                            'detecttype':'LocateRecognize',
                            'languagetype':'CHN_ENG',
                            'imagetype':'1',
-                           'image': base64.b64encode(bImage)
+                           'image': base64.b64encode(bImage).decode("utf-8")
                            }
         headers = {"Content-Type": "application/x-www-form-urlencoded",
                             "apikey": "0830a440f9e1b9a31c5e807fa2f0ab61"
                           }
-        rdd = yield from aiohttp.post('http://apis.baidu.com/apistore/idlocr/ocr', data=payload, headers=headers)
+        url = 'http://apis.baidu.com/apistore/idlocr/ocr'
+        rdd = yield from aiohttp.post(url,data=payload,headers=headers)
         return (yield from rdd.text())
-
-@asyncio.coroutine
-def saveImg(imgName,b):
-    with open('/Users/chocobobo/Work/d3/public/weapon/tieba/'+imgName, 'w') as f:
-        f.write(b)
 
 @asyncio.coroutine
 def getTopic(loop,url):
@@ -88,20 +84,21 @@ def getTopic(loop,url):
                 isImg = True
                 imgUrl = img.get("src")
             topic.append(content.get_text())
-        if imgUrl is not None and isImg and len(topic) > 5:
+        if isImg and len(topic) > 5:
             print('=============%s==============' % soup.title.string)
             print(url)
             yield from orm.create_pool(loop=loop,host=dbHost, user=dbUser, password=dbPassword, db=dbName)
             num = yield from WeaponChangeTopic.findNumber('id', 'topicId=?', topicId)
             if num is None:
                 words = yield from getImgWords(imgUrl)
-                print(json.loads(words))
-               # try:
-               #     wordList = json.loads(words)['retData']
-               #     if len(wordList) > 0:
-               #         pass
-               # except ValueError as e:
-               #     print("baidu ocr json error: %s" % words)
+                try:
+                    wordList = json.loads(words)['retData']
+                    if len(wordList) > 0:
+                        print('--------------')
+                        print(wordList[0]["word"].strip())
+
+                except ValueError as e:
+                    print("baidu ocr json error: %s" % words)
 
 
 def checkTitle(tag):

@@ -1,36 +1,39 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+import base64
+import json
 import aiohttp
 import asyncio
-import json
-import urllib.parse
-import codecs
-import base64
-import urllib.request
+
+str = '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDABMNDxEPDBMREBEWFRMXHTAfHRsbHTsqLSMwRj5KSUU+RENNV29eTVJpU0NEYYRiaXN3fX59S12Jkoh5kW96fXj/2wBDARUWFh0ZHTkfHzl4UERQeHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHj/wAARCAAfACEDAREAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAQDBQb/xAAjEAACAgICAgEFAAAAAAAAAAABAgADBBESIRMxBSIyQXGB/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APawEBAQEBAgy8i8ZTVV3UY6V1eU2XoWDDZB19S646Gz39w9fkKsW1r8Wm2yo1PYis1be0JG9H9QNYCAgc35Cl3yuVuJZl0cB41rZQa32dt2y6OuOiOxo61vsLcVblxaVyXD3hFFjL6La7I/sDWAgICAgICB/9k='
+
+bstr = base64.b64decode(str)
+
+#with open('test.jpg', 'wb') as f:
+#  f.write(bstr)
+
+with open('/Users/chocobobo/Work/d3/public/weapon/tieba/test.jpg', 'rb') as f:
+    img = base64.b64encode(f.read()).decode("utf-8")
 
 
 @asyncio.coroutine
-def getImgString(bImage):
+def wget(img):
     payload = {'fromdevice':'pc',
-               'clientip':'115.28.134.55',
-               'detecttype':'LocateRecognize',
-               'languagetype':'CHN_ENG',
-               'imagetype':'2',
-               'image': bImage
-               }
+                       'clientip':'115.28.134.55',
+                       'detecttype':'LocateRecognize',
+                       'languagetype':'CHN_ENG',
+                       'imagetype':'1',
+                       'image': img
+                       }
     headers = {"Content-Type": "application/x-www-form-urlencoded",
-                "apikey": "0830a440f9e1b9a31c5e807fa2f0ab61"
-              }
-    r = yield from aiohttp.post('http://apis.baidu.com/apistore/idlocr/ocr', data=payload, headers=headers)
-    return (yield from r.text())
+                        "apikey": "0830a440f9e1b9a31c5e807fa2f0ab61"
+                      }
+    url = 'http://apis.baidu.com/apistore/idlocr/ocr'
+    rdd = yield from aiohttp.post(url,data=payload,headers=headers)
+    return (yield from rdd.text())
 
-large_image_url = 'http://imgsrc.baidu.com/forum/pic/item/160266d0f703918f33381593573d269758eec4a7.jpg'
-large_image = {'image': urllib.request.urlopen(large_image_url)}
+
 loop = asyncio.get_event_loop()
-topicListHtml = loop.run_until_complete(getImgString(large_image))
-print(json.loads(topicListHtml))
+html = loop.run_until_complete(wget(img))
+print(json.loads(html))
 loop.close()
-
-txtFile = codecs.open('/Users/chocobobo/Work/d3/public/weapon/tieba/down.jpg', 'r', 'utf-16')
-for line in txtFile:
-  print(repr(line))
