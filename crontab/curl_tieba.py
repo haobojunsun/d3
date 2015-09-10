@@ -9,6 +9,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 #import logging; logging.basicConfig(level=logging.INFO)
 from bs4 import BeautifulSoup
 import aiohttp
@@ -19,6 +20,7 @@ import orm
 import json
 import base64
 import urllib.request
+
 
 
 # 数据库配置
