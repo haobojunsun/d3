@@ -8,6 +8,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
 #import logging; logging.basicConfig(level=logging.INFO)
 from bs4 import BeautifulSoup
 import aiohttp
@@ -84,9 +85,12 @@ def getTopic(loop,url):
                 isImg = True
                 imgUrl = img.get("src")
             topic.append(content.get_text())
-        if isImg and len(topic) > 5:
-            print('=============%s==============' % soup.title.string)
-            print(url)
+        if isImg and len(topic) > 6:
+            topicTitle = soup.title.string
+            m = re.match(r'^http.+/(.+)', imgUrl)
+            imgName = m.group(1)
+            logging.info('=============%s==============' % soup.title.string)
+            logging.info(url)
             yield from orm.create_pool(loop=loop,host=dbHost, user=dbUser, password=dbPassword, db=dbName)
             num = yield from WeaponChangeTopic.findNumber('id', 'topicId=?', topicId)
             if num is None:
@@ -94,9 +98,17 @@ def getTopic(loop,url):
                 try:
                     wordList = json.loads(words)['retData']
                     if len(wordList) > 0:
-                        print('--------------')
-                        print(wordList[0]["word"].strip())
-
+                        logging.info(wordList[0]["word"].strip())
+                        weaponTitle = wordList[0]["word"]
+                        weapon = WeaponChangeTopic(comefrom = "tieba",
+                                                   topicId = topicId,
+                                                   title = weaponTitle,
+                                                   details = json.dumps(wordList),
+                                                   topicTitle = topicTitle,
+                                                   topicList = json.dumps(topic),
+                                                   img = imgName
+                                )
+                        yield from weapon.save()
                 except ValueError as e:
                     print("baidu ocr json error: %s" % words)
 
