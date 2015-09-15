@@ -29,6 +29,10 @@ dbPassword='5211314'
 dbName='d3'
 
 
+# 文件位置
+dirBase='/Users/chocobobo/Work/d3/public/weapon/163/'
+
+
 @asyncio.coroutine
 def wget(url):
     try:
@@ -51,7 +55,7 @@ def getImgWords(imgUrl):
         print('[error url:%s]  %s' % (url, e))
     else:
         bImage = yield from r.read()
-        with open('/Users/chocobobo/Work/d3/public/weapon/tieba/'+imgName, 'wb') as f:
+        with open(dirBase+imgName, 'wb') as f:
            f.write(bImage)
         #百度OCR
         payload = {'fromdevice':'pc',

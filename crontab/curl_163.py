@@ -108,9 +108,9 @@ def getTopic(loop,url):
             topic.append(content.get_text().strip())
         topicTitle = soup.find("h2").get_text().replace(' ','').strip()
         topicTitle = topicTitle.replace('只看楼主','')
-        print('-------------------------------')
-        print(topicTitle)
-        print(url)
+        #print('-------------------------------')
+        #print(topicTitle)
+        #print(url)
         # 获取图片页面链接
         imgA = soup.find("ul", class_="img_one")
         if imgA is not None:
@@ -139,8 +139,8 @@ def getTopic(loop,url):
                     if len(wordList) > 0:
                         logging.info(wordList[0]["word"].strip())
                         weaponTitle = wordList[0]["word"]
-                        print(weaponTitle)
-                        print(imgUrl)
+                        #print(weaponTitle)
+                        #print(imgUrl)
                         weapon = WeaponChangeTopic(comefrom = "163",
                                                    topicId = topicId,
                                                    title = weaponTitle,
