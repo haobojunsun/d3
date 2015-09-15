@@ -17,9 +17,10 @@ class WeaponChangeTopic(Model):
     comefrom = StringField(ddl='varchar(10)')
     topicId = StringField(ddl='varchar(50)')
     title =  StringField(ddl='varchar(10)')
-    details = StringField(ddl='varchar(5000)')
+    player = StringField(ddl='char(20)')
+    details = StringField(ddl='text')
     topicTitle = StringField(ddl='varchar(50)')
-    topicList = StringField(ddl='text()')
+    topicList = StringField(ddl='text')
     img = StringField(ddl='varchar(50)')
     createTime = FloatField(default=time.time())
 
