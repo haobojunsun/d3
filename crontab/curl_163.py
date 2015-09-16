@@ -30,6 +30,7 @@ dbName='d3'
 
 # 文件位置
 dirBase='/Users/chocobobo/Work/d3/public/weapon/163/'
+#dirBase='/data/htdocs/d3/public/weapon/163/'
 
 @asyncio.coroutine
 def wget(url,headers=None):
