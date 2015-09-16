@@ -128,8 +128,12 @@ def getTopic(loop,url):
                         isImg = True
 
         if isImg and len(topic) > 6:
-            m = re.match(r'^http.+/(.+)', imgUrl)
-            imgName = m.group(1)
+            m = re.match(r'^http.+/(.+)\.(.+)', imgUrl)
+            imgType = m.group(2)
+            imgName = m.group(1) + "." + imgType
+            # baidu ocr不支持png
+            if imgType == "png":
+                return
             yield from orm.create_pool(loop=loop,host=dbHost, user=dbUser, password=dbPassword, db=dbName)
             num = yield from WeaponChangeTopic.findNumber('id', 'topicId=?', topicId)
             if num is None:
