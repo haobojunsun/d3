@@ -233,3 +233,12 @@ class Model(dict, metaclass=ModelMetaclass):
         rows = yield from execute(self.__delete__, args)
         if rows != 1:
             logging.warn('failed to remove by primary key: affected rows: %s' % rows)
+
+
+    @asyncio.coroutine
+    def delete(self):
+        where = "1=1"
+        for field in self.__fields__:
+            if self.getValue(field) is not None:
+                where = where + " and %s = '%s'" % (field, self.getValue(field))
+        rows = yield from execute('delete from `%s` where %s ' % (self.__table__, where),[])

@@ -24,5 +24,27 @@ class WeaponChangeTopic(Model):
     img = StringField(ddl='varchar(50)')
     createTime = FloatField(default=time.time())
 
+'''
+    天梯排名
+'''
+class HeroTop(Model):
+    __table__ = 'hero_top'
+    id = IntegerField(primary_key=True)
+    body = StringField(ddl='text')
+    createTime = FloatField(default=time.time())
+
+
+'''
+    装备列表
+'''
+class HeroItems(Model):
+    __table__ = 'hero_items'
+    id = IntegerField(primary_key=True)
+    battleTag = StringField(ddl='varchar(50)')
+    heroId = StringField(ddl='varchar(50)')
+    itemData= StringField(ddl='text')
+    createTime = FloatField(default=time.time())
+
+
 
 

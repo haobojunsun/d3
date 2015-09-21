@@ -85,6 +85,7 @@ def getImgWords(imgUrl):
 
 
 # 抓取符合条件的帖子列表
+@asyncio.coroutine
 def getTopicListUrl(url):
     topicListHtml = yield from wget(url)
     soup = BeautifulSoup(topicListHtml, 'html.parser')
